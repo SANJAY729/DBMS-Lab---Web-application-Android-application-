@@ -44,13 +44,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         }
     }
     if (empty(trim($_POST["user_type"]))){
-        $user_type_err = "Please enter a usertype.";     
+        $user_type_err = "Please enter a usertype.";
     }
     else {
         $user_type = trim($_POST["user_type"]);
     }
     if (empty(trim($_POST["name"]))){
-        $name_err = "Please enter a name.";     
+        $name_err = "Please enter a name.";
     }
     else {
         $name = trim($_POST["name"]);
@@ -78,53 +78,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                 mysqli_stmt_close($stmt);
                 if ($user_type == "Customer"){
                     $sql = "INSERT INTO customers (c_uname,c_name,c_address,c_phno) VALUES (?,?,?,?)";
-                    if ($stmt = mysqli_prepare($link, $sql)){
-                        mysqli_stmt_bind_param($stmt, "sssi", $param_username, $param_name, $param_address, $param_phone_number);
-                        $param_username = $username;
-                        $param_name = $name;
-                        $param_address = $address;
-                        $param_phone_number = $phone_number;
-                        if (mysqli_stmt_execute($stmt)){
-                            mysqli_stmt_close($stmt);
-                            header("location: login.php");
-                        }
-                        else {
-                            echo "Something went wrong. Please try again.";
-                        }
-                    }
                 }
                 if ($user_type == "Restaurant"){
                     $sql = "INSERT INTO restaurants (r_uname,r_name,r_address,r_phno) VALUES (?,?,?,?)";
-                    if ($stmt = mysqli_prepare($link, $sql)){
-                        mysqli_stmt_bind_param($stmt, "sssi", $param_username, $param_name, $param_address, $param_phone_number);
-                        $param_username = $username;
-                        $param_name = $name;
-                        $param_address = $address;
-                        $param_phone_number = $phone_number;
-                        if (mysqli_stmt_execute($stmt)){
-                            mysqli_stmt_close($stmt);
-                            header("location: login.php");
-                        }
-                        else {
-                            echo "Something went wrong. Please try again.";
-                        }
-                    }
                 }
                 if ($user_type == "Delivery Agent"){
-                    $sql = "INSERT INTO customers (da_uname,da_name,da_address,da_phno) VALUES (?,?,?,?)";
-                    if ($stmt = mysqli_prepare($link, $sql)){
-                        mysqli_stmt_bind_param($stmt, "sssi", $param_username, $param_name, $param_address, $param_phone_number);
-                        $param_username = $username;
-                        $param_name = $name;
-                        $param_address = $address;
-                        $param_phone_number = $phone_number;
-                        if (mysqli_stmt_execute($stmt)){
-                            mysqli_stmt_close($stmt);
-                            header("location: login.php");
-                        }
-                        else {
-                            echo "Something went wrong. Please try again.";
-                        }
+                    $sql = "INSERT INTO delivery_agents (da_uname,da_name,da_address,da_phno) VALUES (?,?,?,?)";
+                }
+                if ($stmt = mysqli_prepare($link, $sql)){
+                    mysqli_stmt_bind_param($stmt, "sssi", $param_username, $param_name, $param_address, $param_phone_number);
+                    $param_username = $username;
+                    $param_name = $name;
+                    $param_address = $address;
+                    $param_phone_number = $phone_number;
+                    if (mysqli_stmt_execute($stmt)){
+                        mysqli_stmt_close($stmt);
+                        header("location: login.php");
+                    }
+                    else {
+                        mysqli_stmt_close($stmt);
+                        echo "Something went wrong. Please try again.";
                     }
                 }
             }
@@ -200,5 +173,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             </div>
             <p>Already have an account? <a href="login.php">Login here</a>.</p>
         </form>
+        </div>
     </body>
 </html>
