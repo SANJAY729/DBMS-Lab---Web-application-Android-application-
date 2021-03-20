@@ -1,4 +1,5 @@
 <?php
+require_once "config.php";
 session_start();
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     header("location: login.php");
@@ -111,7 +112,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     </head>
     <body>
         <div class="wrapper">
-            <h2>Restaurant</h2>
+            <h2><?php echo $_SESSION["username"]; ?></h2>
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                 <p>Fill the details to add new items to the menu!</p>
                 <div class="form-group <?php echo (!empty($new_item_name_err)) ? 'has-error' : ''; ?>">
@@ -120,12 +121,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                     <span class="help-block"><?php echo $new_item_name_err; ?></span>
                 </div>
                 <div class="form-group <?php echo (!empty($new_item_cost_err)) ? 'has-error' : ''; ?>">
-                    <label>Item Cost</label>
+                    <label>Item Cost (in Rupees)</label>
                     <input type="number" name="new_item_cost" class="form-control" value="<?php echo $new_item_cost; ?>">
                     <span class="help-block"><?php echo $new_item_cost_err; ?></span>
                 </div>
                 <div class="form-group <?php echo (!empty($new_item_time_err)) ? 'has-error' : ''; ?>">
-                    <label>Time Needed to Cook</label>
+                    <label>Time Needed to Cook (in minutes)</label>
                     <input type="number" name="new_item_time" class="form-control" value="<?php echo $new_item_time; ?>">
                     <span class="help-block"><?php echo $new_item_time_err; ?></span>
                 </div>
