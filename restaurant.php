@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                 $param_p_description = $new_item_description;
                 if (mysqli_stmt_execute($stmt)){
                     mysqli_stmt_close($stmt);
-                    //header("location: restaurant.php");
+                    $new_item_description_err = "Succesfully added Item to Menu";
                 }
                 else {
                     echo "Something went wrong. Please try again.";
@@ -76,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                             $param_p_id = $del_item_id;
                             if (mysqli_stmt_execute($stmt)){
                                 mysqli_stmt_close($stmt);
-                                //header("location: restaurant.php");
+                                $del_item_id_err = "Succesfully deleted Item from Menu";
                             }
                             else {
                                 mysqli_stmt_close($stmt);
@@ -107,8 +107,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
         <style type="text/css">
             body{ font: 14px sans-serif; }
-            table, th, td {
+            table, th, td ,tr{
                 border: 1px solid black;
+                align: center;
+                padding: 2%;
+                width:500px;
             }
         </style>
     </head>
@@ -116,6 +119,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         <div style="float:left; width: 30%; padding: 40px;">
             <h2><?php echo $_SESSION["username"]; ?></h2>
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                <h3>Add Items</h3>
                 <p>Fill the details to add new items to the menu!</p>
                 <div class="form-group <?php echo (!empty($new_item_name_err)) ? 'has-error' : ''; ?>">
                     <label>Item Name</label>
@@ -143,6 +147,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             </form>
 
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                <h3>Delete Items</h3>
                 <p>Type the ID of the item to be deleted</p>
                 <div class="form-group <?php echo (!empty($del_item_id_err)) ? 'has-error' : ''; ?>">
                     <label>Item ID</label>
@@ -158,8 +163,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                 <a href="logout.php" class="btn btn-danger">Sign Out of Your Account</a>
             </p>
         </div>
-        <div style="float:right; width: 50%; padding: 20px;">
-            <h3><?php echo "ALLO"; ?></h3>
+        <div style="float:right; width: 50%; padding: 40px;">
+            <h2><?php echo "Menu"; ?></h2>
             <?php
                 $sql = "SELECT p_id, p_name, p_cost, p_time, p_description FROM products WHERE r_uname = ?";
                 if ($stmt = mysqli_prepare($link, $sql)){
@@ -168,17 +173,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                     if (mysqli_stmt_execute($stmt)){
                         mysqli_stmt_store_result($stmt);
                         if (mysqli_stmt_num_rows($stmt) > 0){
-                            echo mysqli_stmt_num_rows($stmt);
                             echo "<table>";
                             echo "<tr><th>ID</th><th>Name</th><th>Cost</th><th>Time</th><th>Description</th></tr>\n";
-                            while ($row = mysqli_fetch_assoc($stmt)){
-                                // echo "<tr><td>{$row["p_id"]}</td><td>{$row["p_name"]}</td><td>{$row["p_cost"]}</td><td>{$row["p_time"]}</td><td>{$row["p_description"]}</td></tr>\n";
-                                echo $row;
+                            mysqli_stmt_bind_result($stmt, $id, $name, $cost, $time, $description);
+                            while (mysqli_stmt_fetch($stmt)){
+                                echo "<tr><td>{$id}</td><td>{$name}</td><td>{$cost}</td><td>{$time}</td><td>{$description}</td></tr>\n";
                             }
                             echo "</table>";
                         }
                         else {
-                            echo "No Food Item";
+                            echo "No Food Items Added";
                         }
                         mysqli_stmt_close($stmt);
                     }
