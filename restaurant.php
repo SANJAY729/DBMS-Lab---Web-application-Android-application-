@@ -107,11 +107,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
         <style type="text/css">
             body{ font: 14px sans-serif; }
-            .wrapper{ width: 350px; padding: 20px; }
+            table, th, td {
+                border: 1px solid black;
+            }
         </style>
     </head>
     <body>
-        <div class="wrapper">
+        <div style="float:left; width: 30%; padding: 40px;">
             <h2><?php echo $_SESSION["username"]; ?></h2>
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                 <p>Fill the details to add new items to the menu!</p>
@@ -155,6 +157,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             <p>
                 <a href="logout.php" class="btn btn-danger">Sign Out of Your Account</a>
             </p>
+        </div>
+        <div style="float:right; width: 50%; padding: 20px;">
+            <h3><?php echo "ALLO"; ?></h3>
+            <?php
+                $sql = "SELECT p_id, p_name, p_cost, p_time, p_description FROM products WHERE r_uname = ?";
+                if ($stmt = mysqli_prepare($link, $sql)){
+                    mysqli_stmt_bind_param($stmt, "s", $param_r_username);
+                    $param_r_username = $_SESSION["username"];
+                    if (mysqli_stmt_execute($stmt)){
+                        mysqli_stmt_store_result($stmt);
+                        if (mysqli_stmt_num_rows($stmt) > 0){
+                            echo mysqli_stmt_num_rows($stmt);
+                            echo "<table>";
+                            echo "<tr><th>ID</th><th>Name</th><th>Cost</th><th>Time</th><th>Description</th></tr>\n";
+                            while ($row = mysqli_fetch_assoc($stmt)){
+                                // echo "<tr><td>{$row["p_id"]}</td><td>{$row["p_name"]}</td><td>{$row["p_cost"]}</td><td>{$row["p_time"]}</td><td>{$row["p_description"]}</td></tr>\n";
+                                echo $row;
+                            }
+                            echo "</table>";
+                        }
+                        else {
+                            echo "No Food Item";
+                        }
+                        mysqli_stmt_close($stmt);
+                    }
+                    else {
+                        mysqli_stmt_close($stmt);
+                        echo "Something went wrong. Please try again.";
+                    }
+                }
+            ?>
         </div>
     </body>
 </html>

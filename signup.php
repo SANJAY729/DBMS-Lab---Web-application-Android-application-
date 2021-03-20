@@ -120,11 +120,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
         <style type="text/css">
             body{ font: 14px sans-serif; }
-            .wrapper{ width: 350px; padding: 20px; }
         </style>
     </head>
     <body>
-        <div class="wrapper">
+        <div style="float:left; width: 30%; padding: 40px;">
         <h2>Sign Up</h2>
         <p>Please fill this form to create an account.</p>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
