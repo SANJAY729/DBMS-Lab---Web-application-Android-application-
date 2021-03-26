@@ -6,8 +6,8 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     exit;
 }
 
-$new_item_name = $new_item_cost = $new_item_time = $new_item_description = $del_item_id = "";
-$new_item_name_err = $new_item_cost_err = $new_item_time_err = $new_item_description_err = $del_item_id_err = "";
+$new_item_name = $new_item_cost = $new_item_time = $new_item_description = $del_item_id = $status_order_id  = $status_new_status = "";
+$new_item_name_err = $new_item_cost_err = $new_item_time_err = $new_item_description_err = $del_item_id_err = $status_order_id_err = $status_new_status_err = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
     if (!empty($_POST['add_item'])){
@@ -96,6 +96,57 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             }
         }
     }
+    else if (!empty($_POST['update_order_status'])){
+        if (empty(trim($_POST["status_order_id"]))){
+            $status_order_id_err = "Please enter the ID of the order whose status is to be uodated"; 
+        }
+        else {
+            $status_order_id = trim($_POST["status_order_id"]);
+        }
+        if (empty(trim($_POST["new_status"]))){
+            $status_new_status_err = "Please enter new status";
+        }
+        else {
+            $status_new_status = $_POST["new_status"];
+        }
+        if (empty($status_new_status_err) && empty($status_order_id_err)){
+            $sql = "SELECT * FROM orders WHERE o_id = ? and r_uname = ?";
+            if ($stmt = mysqli_prepare($link, $sql)){
+                mysqli_stmt_bind_param($stmt, "is", $param_o_id, $param_r_username);
+                $param_o_id = $status_order_id;
+                $param_r_username = $_SESSION["username"];
+                if (mysqli_stmt_execute($stmt)){
+                    mysqli_stmt_store_result($stmt);
+                    if (mysqli_stmt_num_rows($stmt) == 1){
+                        mysqli_stmt_close($stmt);
+                        $sql = "UPDATE orders SET order_status = ? WHERE o_id = ? AND r_uname = ?";
+                        if ($stmt = mysqli_prepare($link, $sql)){
+                            mysqli_stmt_bind_param($stmt, "sis", $param_o_status, $param_o_id, $param_r_username);
+                            $param_o_status = $status_new_status;
+                            $param_o_id = $status_order_id;
+                            $param_r_username = $_SESSION["username"];
+                            if (mysqli_stmt_execute($stmt)){
+                                mysqli_stmt_close($stmt);
+                                $status_new_status_err = "Succesfully updated status";
+                            }
+                            else {
+                                mysqli_stmt_close($stmt);
+                                echo "Something went wrong. Please try again.";
+                            }
+                        }
+                    }
+                    else {
+                        mysqli_stmt_close($stmt);
+                        $status_new_status_err = "Invalid Order ID";
+                    }
+                }
+                else {
+                    mysqli_stmt_close($stmt);
+                    echo "Something went wrong. Please try again.";
+                }
+            }
+        }
+    }
 }
 ?>
 
@@ -106,7 +157,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         <title>Restaurant</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
         <style type="text/css">
-            body{ font: 14px sans-serif; }
+            body{
+                font: 14px sans-serif;
+                text-align: left;
+            }
             table, th, td ,tr{
                 border: 1px solid black;
                 align: center;
@@ -143,12 +197,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                 </div>
                 <div class="form-group">
                     <input type="submit" name="add_item" class="btn btn-primary" value="Add">
+                    <input type="reset" class="btn btn-default" value="Reset">
                 </div>
             </form>
 
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                 <h3>Delete Items</h3>
-                <p>Type the ID of the item to be deleted</p>
+                <p>Enter the ID of the item to be deleted</p>
                 <div class="form-group <?php echo (!empty($del_item_id_err)) ? 'has-error' : ''; ?>">
                     <label>Item ID</label>
                     <input type="text" name="del_item_id" class="form-control" value="<?php echo $del_item_id; ?>">
@@ -156,9 +211,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                 </div>
                 <div class="form-group">
                     <input type="submit" name="delete_item" class="btn btn-primary" value="Delete">
+                    <input type="reset" class="btn btn-default" value="Reset">
                 </div>
             </form>
 
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                <h3>Status Update</h3>
+                <p>Enter the ID of the order whose status is to be updated</p>
+                <div class="form-group <?php echo (!empty($status_order_id_err)) ? 'has-error' : ''; ?>">
+                    <label>Order ID</label>
+                    <input type="number" name="status_order_id" class="form-control" value="<?php echo $status_order_id; ?>">
+                    <span class="help-block"><?php echo $status_order_id_err; ?></span>
+                </div>
+                <div class="form-group <?php echo (!empty($status_new_status_err)) ? 'has-error' : ''; ?>">
+                    <label for="newstatus">New Status</label>
+                    <select id="newstatus" name="new_status">
+                        <option value="Prepared">Prepared</option>
+                        <option value="Delayed">Delayed</option>
+                    </select>
+                    <span class="help-block"><?php echo $status_new_status_err; ?></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" name="update_order_status" class="btn btn-primary" value="Update">
+                    <input type="reset" class="btn btn-default" value="Reset">
+                </div>
+            </form>
             <p>
                 <a href="logout.php" class="btn btn-danger">Sign Out of Your Account</a>
             </p>
@@ -183,6 +260,62 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                         }
                         else {
                             echo "No Food Items Added";
+                        }
+                        mysqli_stmt_close($stmt);
+                    }
+                    else {
+                        mysqli_stmt_close($stmt);
+                        echo "Something went wrong. Please try again.";
+                    }
+                }
+            ?>
+            <h2><?php echo "Orders"; ?></h2>
+            <?php
+                $sql = "SELECT orders.o_id, orders.total_cost , orders.expected_time, orders.order_status, assigned.da_uname FROM orders, assigned WHERE orders.r_uname = ? AND orders.o_id=assigned.o_id";
+                if ($stmt = mysqli_prepare($link, $sql)){
+                    mysqli_stmt_bind_param($stmt, "s", $param_r_username);
+                    $param_r_username = $_SESSION["username"];
+                    if (mysqli_stmt_execute($stmt)){
+                        mysqli_stmt_store_result($stmt);
+                        if (mysqli_stmt_num_rows($stmt) > 0){
+                            echo "<table>";
+                            echo "<tr><th>ID</th><th>Cost</th><th>Time for preparation</th><th>Status</th><th>Delivery Agent Username</th></tr>\n";
+                            mysqli_stmt_bind_result($stmt, $id, $cost, $time, $status, $da_uname);
+                            while (mysqli_stmt_fetch($stmt)){
+                                echo "<tr><td>{$id}</td><td>{$cost}</td><td>{$time}</td><td>{$status}</td><td>{$da_uname}</td></tr>\n";
+                            }
+                            echo "</table>";
+                        }
+                        else {
+                            echo "No orders";
+                        }
+                        mysqli_stmt_close($stmt);
+                    }
+                    else {
+                        mysqli_stmt_close($stmt);
+                        echo "Something went wrong. Please try again.";
+                    }
+                }
+            ?>
+            <h2><?php echo "Order Details"; ?></h2>
+            <?php
+                $sql = "SELECT contains.o_id, contains.p_id, contains.quantity FROM contains,orders WHERE orders.r_uname = ? AND orders.o_id=contains.o_id";
+                if ($stmt = mysqli_prepare($link, $sql)){
+                    mysqli_stmt_bind_param($stmt, "s", $param_r_username);
+                    $param_r_username = $_SESSION["username"];
+                    if (mysqli_stmt_execute($stmt)){
+                        mysqli_stmt_store_result($stmt);
+                        if (mysqli_stmt_num_rows($stmt) > 0){
+                            echo "<table>";
+                            echo "<tr><th>Order ID</th><th>Product ID</th><th>Quantity</th></tr>\n";
+                            mysqli_stmt_bind_result($stmt, $o_id, $p_id, $quantity);
+                            while (mysqli_stmt_fetch($stmt)){
+                                echo "<tr><td>{$o_id}</td><td>{$p_id}</td><td>{$quantity}</td></tr>\n";
+                            }
+                            echo "</table>";
+                        }
+                        else {
+                            echo "Order Details not found";
                         }
                         mysqli_stmt_close($stmt);
                     }

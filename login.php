@@ -81,13 +81,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         <title>Login</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
         <style type="text/css">
-            body{ font: 14px sans-serif; }
+            body{
+                font: 14px sans-serif;
+                text-align: left;
+            }
         </style>
     </head>
     <body>
     <div style="float:left; width: 30%; padding: 40px;">
         <h2>Login</h2>
-        <p>Please fill this form to login to your account.</p>
+        <p>Enter username password to login to your account.</p>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
             <div class="form-group <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
                 <label>Username</label>

@@ -36,3 +36,35 @@ CREATE TABLE IF NOT EXISTS products (
 );
 
 ALTER TABLE products AUTO_INCREMENT=100;
+
+CREATE TABLE IF NOT EXISTS orders (
+    o_id INT NOT NULL PRIMARY KEY,
+    r_uname VARCHAR(50) NOT NULL,
+    total_cost INT NOT NULL,
+    expected_time INT NOT NULL,
+    order_status VARCHAR(50) DEFAULT "Preparing",
+    FOREIGN KEY (r_uname) REFERENCES restaurants(r_uname)
+);
+
+CREATE TABLE IF NOT EXISTS assigned (
+    o_id INT NOT NULL PRIMARY KEY,
+    da_uname VARCHAR(50) NOT NULL,
+    delivery_time INT NOT NULL DEFAULT 15,
+    FOREIGN KEY (o_id) REFERENCES orders(o_id)
+);
+
+CREATE TABLE IF NOT EXISTS places (
+    o_id INT NOT NULL PRIMARY KEY,
+    c_uname VARCHAR(50) NOT NULL,
+    total_time INT NOT NULL,
+    FOREIGN KEY (o_id) REFERENCES orders(o_id),
+    FOREIGN KEY (c_uname) REFERENCES customers(c_uname)
+);
+
+CREATE TABLE IF NOT EXISTS contains (
+    o_id INT NOT NULL,
+    p_id INT NOT NULL,
+    quantity INT NOT NULL,
+    FOREIGN KEY (p_id) REFERENCES products(p_id),
+    PRIMARY KEY (o_id, p_id)
+);
