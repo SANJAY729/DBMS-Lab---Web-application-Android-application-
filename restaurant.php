@@ -1,4 +1,5 @@
 <?php
+// KoMATO
 require_once "config.php";
 session_start();
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
@@ -251,7 +252,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                         mysqli_stmt_store_result($stmt);
                         if (mysqli_stmt_num_rows($stmt) > 0){
                             echo "<table>";
-                            echo "<tr><th>ID</th><th>Name</th><th>Cost</th><th>Time</th><th>Description</th></tr>\n";
+                            echo "<tr><th>ID</th><th>Name</th><th>Cost</th><th>Time (in min)</th><th>Description</th></tr>\n";
                             mysqli_stmt_bind_result($stmt, $id, $name, $cost, $time, $description);
                             while (mysqli_stmt_fetch($stmt)){
                                 echo "<tr><td>{$id}</td><td>{$name}</td><td>{$cost}</td><td>{$time}</td><td>{$description}</td></tr>\n";
@@ -299,7 +300,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             ?>
             <h2><?php echo "Order Details"; ?></h2>
             <?php
-                $sql = "SELECT contains.o_id, contains.p_id, contains.quantity FROM contains,orders WHERE orders.r_uname = ? AND orders.o_id=contains.o_id";
+                $sql = "SELECT contains.o_id, contains.p_id, contains.quantity FROM contains,orders WHERE orders.r_uname = ? AND orders.o_id=contains.o_id AND orders.order_status='Preparing'";
                 if ($stmt = mysqli_prepare($link, $sql)){
                     mysqli_stmt_bind_param($stmt, "s", $param_r_username);
                     $param_r_username = $_SESSION["username"];

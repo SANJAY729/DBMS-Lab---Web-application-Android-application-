@@ -1,4 +1,5 @@
 <?php
+// KoMATO
 require_once "config.php";
 session_start();
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
@@ -84,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                             if (mysqli_stmt_execute($stmt)){
                                 mysqli_stmt_close($stmt);
                                 if ($status_new_status == "Completed"){
-                                    $sql = "DELETE FROM assigned WHERE o_id=?";
+                                    /*$sql = "DELETE FROM assigned WHERE o_id=?";
                                     if ($stmt = mysqli_prepare($link, $sql)){
                                         mysqli_stmt_bind_param($stmt, "i", $param_o_id);
                                         $param_o_id = $status_order_id;
@@ -107,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                                             mysqli_stmt_close($stmt);
                                             echo "Something went wrong. Please try again.";
                                         }
-                                    }
+                                    }*/
                                 }
                                 $status_new_status_err = "Succesfully updated status";
                             }

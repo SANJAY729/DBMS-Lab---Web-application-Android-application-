@@ -1,4 +1,5 @@
 <?php
+// KoMATO
 require_once "config.php";
 session_start();
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
@@ -16,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         else {
             $choose_restaurant = trim($_POST["choose_r_uname"]);
             if (isset($_SESSION["restaurant"])){
-                $sql = "DELETE FROM contains WHERE o_id = ?";
+                $sql = "DELETE FROM contains WHERE contains.o_id = ? AND contains.o_id NOT IN (SELECT orders.o_id FROM orders)";
                 if ($stmt = mysqli_prepare($link, $sql)){
                     mysqli_stmt_bind_param($stmt, "i", $param_o_id);
                     $param_o_id = $_SESSION["order_id"];
@@ -201,7 +202,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                 }
             }
 
-            $sql = "SELECT delivery_agents.da_uname FROM delivery_agents WHERE delivery_agents.da_uname NOT IN (SELECT assigned.da_uname FROM assigned) LIMIT 1";
+            $sql = "SELECT delivery_agents.da_uname FROM delivery_agents 
+            WHERE delivery_agents.da_uname NOT IN (SELECT assigned.da_uname FROM assigned,orders 
+            WHERE orders.o_id=assigned.o_id AND (orders.order_status='Preparing' OR orders.order_status='Prepared')) LIMIT 1";
             if ($stmt = mysqli_prepare($link, $sql)){
                 if (mysqli_stmt_execute($stmt)){
                     mysqli_stmt_store_result($stmt);
@@ -212,7 +215,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                     }
                     else {
                         mysqli_stmt_close($stmt);
-                        $sql = "SELECT assigned.da_uname, COUNT(*) as cnt FROM assigned GROUP BY assigned.da_uname ORDER BY cnt LIMIT 1";
+                        $sql = "SELECT assigned.da_uname, COUNT(*) as cnt FROM assigned,orders 
+                        WHERE orders.o_id=assigned.o_id AND (orders.order_status='Preparing' OR orders.order_status='Prepared') 
+                        GROUP BY assigned.da_uname ORDER BY cnt LIMIT 1";
                         if ($stmt = mysqli_prepare($link, $sql)){
                             if (mysqli_stmt_execute($stmt)){
                                 mysqli_stmt_store_result($stmt);
@@ -420,7 +425,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                         mysqli_stmt_store_result($stmt);
                         if (mysqli_stmt_num_rows($stmt) > 0){
                             echo "<table>";
-                            echo "<tr><th>ID</th><th>Name</th><th>Cost</th><th>Time</th><th>Description</th></tr>\n";
+                            echo "<tr><th>ID</th><th>Name</th><th>Cost</th><th>Time (in min)</th><th>Description</th></tr>\n";
                             mysqli_stmt_bind_result($stmt, $id, $name, $cost, $time, $description);
                             while (mysqli_stmt_fetch($stmt)){
                                 echo "<tr><td>{$id}</td><td>{$name}</td><td>{$cost}</td><td>{$time}</td><td>{$description}</td></tr>\n";
@@ -440,15 +445,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             ?>
             <h2><?php echo "Order Details";?></h2>
             <?php
-                $sql = "SELECT orders.o_id, orders.r_uname, orders.total_cost, places.total_time, orders.order_status FROM orders,places WHERE places.c_uname = ?";
+                $sql = "SELECT orders.o_id, orders.r_uname, orders.total_cost, places.total_time, orders.order_status FROM orders,places WHERE places.c_uname = ? AND places.o_id = orders.o_id";
                 if ($stmt = mysqli_prepare($link, $sql)){
-                    mysqli_stmt_bind_param($stmt, "i", $param_c_uname);
+                    mysqli_stmt_bind_param($stmt, "s", $param_c_uname);
                     $param_c_uname = $_SESSION["username"];
                     if (mysqli_stmt_execute($stmt)){
                         mysqli_stmt_store_result($stmt);
                         if (mysqli_stmt_num_rows($stmt) > 0){
                             echo "<table>";
-                            echo "<tr><th>Order ID</th><th>Restaurant Name</th><th>Cost</th><th>Time</th><th>Status</th></tr>\n";
+                            echo "<tr><th>Order ID</th><th>Restaurant Name</th><th>Cost</th><th>Time (in min)</th><th>Status</th></tr>\n";
                             mysqli_stmt_bind_result($stmt, $id, $name, $cost, $time, $status);
                             while (mysqli_stmt_fetch($stmt)){
                                 echo "<tr><td>{$id}</td><td>{$name}</td><td>{$cost}</td><td>{$time}</td><td>{$status}</td></tr>\n";
@@ -468,7 +473,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             ?>
             <h2><?php echo "Order Contents";?></h2>
             <?php
-                $sql = "SELECT contains.o_id, contains.p_id, contains.quantity FROM contains,places WHERE places.o_id=contains.o_id AND places.c_uname = ?";
+                $sql = "SELECT contains.o_id, contains.p_id, contains.quantity FROM contains,places,orders WHERE places.o_id=contains.o_id AND places.c_uname = ? AND orders.o_id=places.o_id AND NOT orders.order_status = 'Completed'";
                 if ($stmt = mysqli_prepare($link, $sql)){
                     mysqli_stmt_bind_param($stmt, "s", $param_c_uname);
                     $param_c_uname = $_SESSION["username"];

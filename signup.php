@@ -1,4 +1,5 @@
 <?php
+// KoMATO
 require_once "config.php";
 
 $username = $password = $confirm_password = $user_type = $name = $address = $phone_number = "";

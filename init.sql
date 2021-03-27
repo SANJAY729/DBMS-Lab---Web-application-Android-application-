@@ -68,3 +68,5 @@ CREATE TABLE IF NOT EXISTS contains (
     FOREIGN KEY (p_id) REFERENCES products(p_id),
     PRIMARY KEY (o_id, p_id)
 );
+
+//INSERT STUFF TO BE DONE
