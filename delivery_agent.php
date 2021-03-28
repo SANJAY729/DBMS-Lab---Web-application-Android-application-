@@ -142,17 +142,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             body{
                 font: 14px sans-serif;
                 text-align: left;
+                background-image: url('https://media.istockphoto.com/photos/light-blue-paper-color-with-texture-for-background-picture-id1095286208?k=6&m=1095286208&s=612x612&w=0&h=YRLtyfrpIsNzmuWxNYOwboXCipAWV8zM-NMScsCT2TQ=');
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: 100% 100%;
             }
             table, th, td ,tr{
                 border: 1px solid black;
                 align: center;
                 padding: 2%;
-                width:500px;
+                width: 600px;
             }
         </style>
     </head>
     <body>
-        <div style="float:left; width: 30%; padding: 40px;">
+        <header style = "margin-top: 40px; text-align: center;">
+            <h1>KoMATO</h1>
+        </header>
+        <div style="float:left; width: 35%; padding: 60px;">
+            <h2><?php echo "Welcome, ", $_SESSION["username"]; ?></h2>
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                 <h3>Expected Time for Delivery</h3>
                 <p>Enter the Order ID</p>
@@ -162,7 +170,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                     <span class="help-block"><?php echo $time_order_id_err; ?></span>
                 </div>
                 <div class="form-group <?php echo (!empty($time_new_time_err)) ? 'has-error' : ''; ?>">
-                    <label>Time Required</label>
+                    <label>Time Required (in min)</label>
                     <input type="number" name="new_time" class="form-control" value="<?php echo $time_new_time; ?>">
                     <span class="help-block"><?php echo $time_new_time_err; ?></span>
                 </div>
@@ -197,7 +205,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             <a href="logout.php" class="btn btn-danger">Sign Out of Your Account</a>
         </p>
         </div>
-        <div style="float:right; width: 50%; padding: 40px;">
+        <div style="float:right; width: 50%; padding: 60px;">
             <h2><?php echo "Order Details"; ?></h2>
             <?php
                 $sql = "SELECT assigned.o_id, restaurants.r_name, restaurants.r_address, customers.c_name, customers.c_address, orders.order_status FROM assigned, restaurants, customers, orders, places 

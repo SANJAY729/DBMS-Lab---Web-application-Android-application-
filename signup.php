@@ -123,11 +123,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             body{
                 font: 14px sans-serif;
                 text-align: left;
+                background-image: url('https://media.istockphoto.com/photos/light-blue-paper-color-with-texture-for-background-picture-id1095286208?k=6&m=1095286208&s=612x612&w=0&h=YRLtyfrpIsNzmuWxNYOwboXCipAWV8zM-NMScsCT2TQ=');
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: 100% 100%;
             }
         </style>
     </head>
     <body>
-        <div style="float:left; width: 30%; padding: 40px;">
+        <header style = "margin-top: 40px; text-align: center;">
+            <h1>KoMATO</h1>
+        </header>
+        <div style="float:left; width: 35%; padding: 60px;">
         <h2>Sign Up</h2>
         <p>Please fill this form to create an account.</p>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">

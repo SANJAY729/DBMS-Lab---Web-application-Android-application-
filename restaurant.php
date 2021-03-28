@@ -161,18 +161,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             body{
                 font: 14px sans-serif;
                 text-align: left;
+                background-image: url('https://media.istockphoto.com/photos/light-blue-paper-color-with-texture-for-background-picture-id1095286208?k=6&m=1095286208&s=612x612&w=0&h=YRLtyfrpIsNzmuWxNYOwboXCipAWV8zM-NMScsCT2TQ=');
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: 100% 100%;
             }
             table, th, td ,tr{
                 border: 1px solid black;
                 align: center;
                 padding: 2%;
-                width:500px;
+                width: 600px;
             }
         </style>
     </head>
     <body>
-        <div style="float:left; width: 30%; padding: 40px;">
-            <h2><?php echo $_SESSION["username"]; ?></h2>
+        <header style = "margin-top: 40px; text-align: center;">
+            <h1>KoMATO</h1>
+        </header>
+        <div style="float:left; width: 35%; padding: 60px;">
+            <h2><?php echo "Welcome, ", $_SESSION["username"]; ?></h2>
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                 <h3>Add Items</h3>
                 <p>Fill the details to add new items to the menu!</p>
@@ -187,7 +194,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                     <span class="help-block"><?php echo $new_item_cost_err; ?></span>
                 </div>
                 <div class="form-group <?php echo (!empty($new_item_time_err)) ? 'has-error' : ''; ?>">
-                    <label>Time Needed to Cook (in minutes)</label>
+                    <label>Time Needed to Cook (in min)</label>
                     <input type="number" name="new_item_time" class="form-control" value="<?php echo $new_item_time; ?>">
                     <span class="help-block"><?php echo $new_item_time_err; ?></span>
                 </div>
@@ -241,7 +248,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                 <a href="logout.php" class="btn btn-danger">Sign Out of Your Account</a>
             </p>
         </div>
-        <div style="float:right; width: 50%; padding: 40px;">
+        <div style="float:right; width: 50%; padding: 60px;">
             <h2><?php echo "Menu"; ?></h2>
             <?php
                 $sql = "SELECT p_id, p_name, p_cost, p_time, p_description FROM products WHERE r_uname = ?";
@@ -280,10 +287,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                         mysqli_stmt_store_result($stmt);
                         if (mysqli_stmt_num_rows($stmt) > 0){
                             echo "<table>";
-                            echo "<tr><th>ID</th><th>Cost</th><th>Time for preparation</th><th>Status</th><th>Delivery Agent Username</th></tr>\n";
+                            echo "<tr><th>ID</th><th>Cost</th><th>Time for preparation (in min)</th><th>Delivery Agent Username</th><th>Status</th></tr>\n";
                             mysqli_stmt_bind_result($stmt, $id, $cost, $time, $status, $da_uname);
                             while (mysqli_stmt_fetch($stmt)){
-                                echo "<tr><td>{$id}</td><td>{$cost}</td><td>{$time}</td><td>{$status}</td><td>{$da_uname}</td></tr>\n";
+                                echo "<tr><td>{$id}</td><td>{$cost}</td><td>{$time}</td><td>{$da_uname}</td><td>{$status}</td></tr>\n";
                             }
                             echo "</table>";
                         }
@@ -300,7 +307,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             ?>
             <h2><?php echo "Order Details"; ?></h2>
             <?php
-                $sql = "SELECT contains.o_id, contains.p_id, contains.quantity FROM contains,orders WHERE orders.r_uname = ? AND orders.o_id=contains.o_id AND orders.order_status='Preparing'";
+                $sql = "SELECT contains.o_id, contains.p_id, contains.quantity FROM contains,orders WHERE orders.r_uname = ? AND orders.o_id=contains.o_id AND (orders.order_status='Preparing' OR orders.order_status='Delayed')";
                 if ($stmt = mysqli_prepare($link, $sql)){
                     mysqli_stmt_bind_param($stmt, "s", $param_r_username);
                     $param_r_username = $_SESSION["username"];

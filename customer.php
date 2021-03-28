@@ -31,7 +31,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                 }
             }
             $_SESSION["restaurant"] = $choose_restaurant;
-            $_SESSION["order_id"] =  rand(1000,9999);
+            while (1){
+                $_SESSION["order_id"] =  rand(1000,9999);
+                $sql = "SELECT * FROM orders WHERE o_id = ?";
+                if ($stmt = mysqli_prepare($link, $sql)){
+                    mysqli_stmt_bind_param($stmt, "i", $param_o_id);
+                    $param_o_id = $_SESSION["order_id"];
+                    if (mysqli_stmt_execute($stmt)){
+                        mysqli_stmt_store_result($stmt);
+                        if (mysqli_stmt_num_rows($stmt) == 0){
+                            mysqli_stmt_close($stmt);
+                            break;
+                        }
+                        else {
+                            mysqli_stmt_close($stmt);
+                        }
+                    }
+                    else {
+                        mysqli_stmt_close($stmt);
+                        echo "Something went wrong. Please try again. snvkanv";
+                    }
+                }
+            }
         }
     }
     if (!empty($_POST['add_item'])){
@@ -226,6 +247,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                                     mysqli_stmt_fetch($stmt);
                                     mysqli_stmt_close($stmt);
                                 }
+                                else {
+                                    mysqli_stmt_close($stmt);
+                                    $alloted_da = "";
+                                }
                             }
                             else {
                                 mysqli_stmt_close($stmt);
@@ -268,6 +293,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                     echo "Something went wrong. Please try again.";
                 }
             }
+            unset($_SESSION["restaurant"]);
+            unset($_SESSION["order_id"]);
         }
     }
     if (!empty($_POST['logout'])){
@@ -326,18 +353,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             body{
                 font: 14px sans-serif;
                 text-align: left;
+                background-image: url('https://media.istockphoto.com/photos/light-blue-paper-color-with-texture-for-background-picture-id1095286208?k=6&m=1095286208&s=612x612&w=0&h=YRLtyfrpIsNzmuWxNYOwboXCipAWV8zM-NMScsCT2TQ=');
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: 100% 100%;
             }
             table, th, td ,tr{
                 border: 1px solid black;
                 align: center;
                 padding: 2%;
-                width:500px;
+                width: 600px;
             }
         </style>
     </head>
     <body>
-        <div style="float:left; width: 30%; padding: 40px;">
-            <h2><?php echo $_SESSION["username"]; ?></h2>
+        <header style = "margin-top: 40px; text-align: center;">
+            <h1>KoMATO</h1>
+        </header>
+        <div style="float:left; width: 35%; padding: 60px;">
+            <h2><?php echo "Welcome, ", $_SESSION["username"]; ?></h2>
             
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                 <h3>Choose Restaurant</h3>
@@ -382,8 +416,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                     <input type="submit" name="logout" class="btn btn-danger" value="Sign Out of Your Account">
                 </div>
             </form>
+            <h4>Customer Care: 123456789</h4>
         </div>
-        <div style="float:right; width: 50%; padding: 40px;">
+        <div style="float:right; width: 50%; padding: 60px;">
             <h2><?php echo "Restaurants"; ?></h2>
             <?php
                 $sql = "SELECT r_uname, r_name, r_address, r_phno FROM restaurants";
@@ -445,7 +480,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             ?>
             <h2><?php echo "Order Details";?></h2>
             <?php
-                $sql = "SELECT orders.o_id, orders.r_uname, orders.total_cost, places.total_time, orders.order_status FROM orders,places WHERE places.c_uname = ? AND places.o_id = orders.o_id";
+                $sql = "SELECT orders.o_id, orders.r_uname, orders.total_cost, places.total_time, orders.order_status, delivery_agents.da_phno FROM orders,places,delivery_agents,assigned WHERE places.c_uname = ? AND places.o_id = orders.o_id AND assigned.o_id = orders.o_id AND assigned.da_uname = delivery_agents.da_uname";
                 if ($stmt = mysqli_prepare($link, $sql)){
                     mysqli_stmt_bind_param($stmt, "s", $param_c_uname);
                     $param_c_uname = $_SESSION["username"];
@@ -453,10 +488,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                         mysqli_stmt_store_result($stmt);
                         if (mysqli_stmt_num_rows($stmt) > 0){
                             echo "<table>";
-                            echo "<tr><th>Order ID</th><th>Restaurant Name</th><th>Cost</th><th>Time (in min)</th><th>Status</th></tr>\n";
-                            mysqli_stmt_bind_result($stmt, $id, $name, $cost, $time, $status);
+                            echo "<tr><th>Order ID</th><th>Restaurant</th><th>Cost</th><th>Expected Time (in min)</th><th>Delivery agent Ph No.</th><th>Status</th></tr>\n";
+                            mysqli_stmt_bind_result($stmt, $id, $name, $cost, $time, $status, $phno);
                             while (mysqli_stmt_fetch($stmt)){
-                                echo "<tr><td>{$id}</td><td>{$name}</td><td>{$cost}</td><td>{$time}</td><td>{$status}</td></tr>\n";
+                                echo "<tr><td>{$id}</td><td>{$name}</td><td>{$cost}</td><td>{$time}</td><td>{$phno}</td><td>{$status}</td></tr>\n";
                             }
                             echo "</table>";
                         }

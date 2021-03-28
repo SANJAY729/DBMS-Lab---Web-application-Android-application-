@@ -69,4 +69,24 @@ CREATE TABLE IF NOT EXISTS contains (
     PRIMARY KEY (o_id, p_id)
 );
 
-//INSERT STUFF TO BE DONE
+INSERT INTO login_details VALUES("c1","c1","Customer");
+INSERT INTO login_details VALUES("c2","c2","Customer");
+INSERT INTO login_details VALUES("r1","r1","Restaurant");
+INSERT INTO login_details VALUES("r2","r2","Restaurant");
+INSERT INTO login_details VALUES("d1","d1","Delivery Agent");
+INSERT INTO login_details VALUES("d2","d2","Delivery Agent");
+INSERT INTO login_details VALUES("d3","d3","Delivery Agent");
+
+INSERT INTO customers VALUES("c1","cus1","kgp",11111);
+INSERT INTO customers VALUES("c2","cus2","hyd",22222);
+INSERT INTO restaurants VALUES("r1","res1","kgp",33333);
+INSERT INTO restaurants VALUES("r2","res2","chn",44444);
+INSERT INTO delivery_agents VALUES("d1","dag1","chn",55555);
+INSERT INTO delivery_agents VALUES("d2","dag2","kgp",66241);
+INSERT INTO delivery_agents VALUES("d3","dag3","mum",76891);
+
+INSERT INTO products(r_uname,p_name,p_cost,p_time,p_description) VALUES("r1","btr",15,25,"Butter");
+INSERT INTO products(r_uname,p_name,p_cost,p_time,p_description) VALUES("r1","egg",20,10,"Break Fast");
+INSERT INTO products(r_uname,p_name,p_cost,p_time,p_description) VALUES("r2","dosa",100,20,"Lunch");
+INSERT INTO products(r_uname,p_name,p_cost,p_time,p_description) VALUES("r2","idli",10,5,"Dinner");
+INSERT INTO products(r_uname,p_name,p_cost,p_time,p_description) VALUES("r1","idli",10,8,"Snack");

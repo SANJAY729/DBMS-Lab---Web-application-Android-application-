@@ -85,30 +85,37 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             body{
                 font: 14px sans-serif;
                 text-align: left;
+                background-image: url('https://media.istockphoto.com/photos/light-blue-paper-color-with-texture-for-background-picture-id1095286208?k=6&m=1095286208&s=612x612&w=0&h=YRLtyfrpIsNzmuWxNYOwboXCipAWV8zM-NMScsCT2TQ=');
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: 100% 100%;
             }
         </style>
     </head>
     <body>
-    <div style="float:left; width: 30%; padding: 40px;">
-        <h2>Login</h2>
-        <p>Enter username password to login to your account.</p>
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-            <div class="form-group <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
-                <label>Username</label>
-                <input type="text" name="username" class="form-control" value="<?php echo $username; ?>">
-                <span class="help-block"><?php echo $username_err; ?></span>
-            </div>    
-            <div class="form-group <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control" value="<?php echo $password; ?>">
-                <span class="help-block"><?php echo $password_err; ?></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" class="btn btn-primary" value="Submit">
-                <input type="reset" class="btn btn-default" value="Reset">
-            </div>
-            <p>Don't have an account? <a href="signup.php">Sign Up Now</a>.</p>
-        </form>
-    </div>
+        <header style = "margin-top: 40px; text-align: center;">
+            <h1>KoMATO</h1>
+        </header>
+        <div style="float:left; width: 35%; padding: 60px; ">
+            <h2>Login</h2>
+            <p>Enter username and password to login to your account.</p>
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                <div class="form-group <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
+                    <label>Username</label>
+                    <input type="text" name="username" class="form-control" value="<?php echo $username; ?>">
+                    <span class="help-block"><?php echo $username_err; ?></span>
+                </div>    
+                <div class="form-group <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>">
+                    <label>Password</label>
+                    <input type="password" name="password" class="form-control" value="<?php echo $password; ?>">
+                    <span class="help-block"><?php echo $password_err; ?></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-primary" value="Submit">
+                    <input type="reset" class="btn btn-default" value="Reset">
+                </div>
+                <p>Don't have an account? <a href="signup.php">Sign Up Now</a>.</p>
+            </form>
+        </div>
     </body>
 </html>
