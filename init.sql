@@ -77,16 +77,16 @@ INSERT INTO login_details VALUES("d1","d1","Delivery Agent");
 INSERT INTO login_details VALUES("d2","d2","Delivery Agent");
 INSERT INTO login_details VALUES("d3","d3","Delivery Agent");
 
-INSERT INTO customers VALUES("c1","cus1","kgp",11111);
-INSERT INTO customers VALUES("c2","cus2","hyd",22222);
-INSERT INTO restaurants VALUES("r1","res1","kgp",33333);
-INSERT INTO restaurants VALUES("r2","res2","chn",44444);
-INSERT INTO delivery_agents VALUES("d1","dag1","chn",55555);
-INSERT INTO delivery_agents VALUES("d2","dag2","kgp",66241);
-INSERT INTO delivery_agents VALUES("d3","dag3","mum",76891);
+INSERT INTO customers VALUES("c1","cus1","lbs",11111);
+INSERT INTO customers VALUES("c2","cus2","azad",22222);
+INSERT INTO restaurants VALUES("r1","res1","pan loop",33333);
+INSERT INTO restaurants VALUES("r2","res2","nalanda",44444);
+INSERT INTO delivery_agents VALUES("d1","dag1","rp",55555);
+INSERT INTO delivery_agents VALUES("d2","dag2","rk",66241);
+INSERT INTO delivery_agents VALUES("d3","dag3","ms",76891);
 
-INSERT INTO products(r_uname,p_name,p_cost,p_time,p_description) VALUES("r1","btr",15,25,"Butter");
-INSERT INTO products(r_uname,p_name,p_cost,p_time,p_description) VALUES("r1","egg",20,10,"Break Fast");
-INSERT INTO products(r_uname,p_name,p_cost,p_time,p_description) VALUES("r2","dosa",100,20,"Lunch");
-INSERT INTO products(r_uname,p_name,p_cost,p_time,p_description) VALUES("r2","idli",10,5,"Dinner");
-INSERT INTO products(r_uname,p_name,p_cost,p_time,p_description) VALUES("r1","idli",10,8,"Snack");
+INSERT INTO products(r_uname,p_name,p_cost,p_time,p_description) VALUES("r1","burger",50,10,"veg");
+INSERT INTO products(r_uname,p_name,p_cost,p_time,p_description) VALUES("r1","fries",30,5,"snacks");
+INSERT INTO products(r_uname,p_name,p_cost,p_time,p_description) VALUES("r2","dosa",30,10,"breakfast");
+INSERT INTO products(r_uname,p_name,p_cost,p_time,p_description) VALUES("r2","idli(4pc)",30,10,"breakfast");
+INSERT INTO products(r_uname,p_name,p_cost,p_time,p_description) VALUES("r1","coke",10,8,"drink");
