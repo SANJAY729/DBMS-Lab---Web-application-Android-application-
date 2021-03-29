@@ -24,28 +24,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             $time_new_time = $_POST["new_time"];
         }
         if (empty($time_new_time_err) && empty($time_order_id_err)){
-            $sql = "UPDATE assigned SET delivery_time = ? WHERE o_id = ?";
+            $sql = "SELECT * FROM assigned WHERE o_id = ? AND da_uname = ?";
             if ($stmt = mysqli_prepare($link, $sql)){
-                mysqli_stmt_bind_param($stmt, "ii", $param_time, $param_o_id);
-                $param_time = $time_new_time;
-                $param_o_id = $time_order_id;
+                mysqli_stmt_bind_param($stmt, "is", $param_o_id, $param_da_uname);
+                $param_o_id = $_POST["order_id"];
+                $param_da_uname = $_SESSION["username"];
                 if (mysqli_stmt_execute($stmt)){
-                    mysqli_stmt_close($stmt);
-                }
-                else {
-                    echo "Something went wrong. Please try again.";
-                    mysqli_stmt_close($stmt);
-                }
-            }
+                    mysqli_stmt_store_result($stmt);
+                    if (mysqli_stmt_num_rows($stmt) == 0){
+                        mysqli_stmt_close($stmt);
+                        $time_order_id_err = "Invalid Order Id";
+                    }
+                    else {
+                        mysqli_stmt_close($stmt);
+                        $sql = "UPDATE assigned SET delivery_time = ? WHERE o_id = ?";
+                        if ($stmt = mysqli_prepare($link, $sql)){
+                            mysqli_stmt_bind_param($stmt, "ii", $param_time, $param_o_id);
+                            $param_time = $time_new_time;
+                            $param_o_id = $time_order_id;
+                            if (mysqli_stmt_execute($stmt)){
+                                mysqli_stmt_close($stmt);
+                            }
+                            else {
+                                echo "Something went wrong. Please try again.";
+                                mysqli_stmt_close($stmt);
+                            }
+                        }
 
-            $sql = "UPDATE places,assigned,orders SET places.total_time = assigned.delivery_time + orders.expected_time 
-            WHERE places.o_id = assigned.o_id AND assigned.o_id = orders.o_id AND places.o_id = ?;";
-            if ($stmt = mysqli_prepare($link, $sql)){
-                mysqli_stmt_bind_param($stmt, "i", $param_o_id);
-                $param_o_id = $time_order_id;
-                if (mysqli_stmt_execute($stmt)){
-                    mysqli_stmt_close($stmt);
-                    $time_new_time_err = "Succesfully updated delivery time";
+                        $sql = "UPDATE places,assigned,orders SET places.total_time = assigned.delivery_time + orders.expected_time 
+                        WHERE places.o_id = assigned.o_id AND assigned.o_id = orders.o_id AND places.o_id = ?;";
+                        if ($stmt = mysqli_prepare($link, $sql)){
+                            mysqli_stmt_bind_param($stmt, "i", $param_o_id);
+                            $param_o_id = $time_order_id;
+                            if (mysqli_stmt_execute($stmt)){
+                                mysqli_stmt_close($stmt);
+                                $time_new_time_err = "Succesfully updated delivery time";
+                            }
+                            else {
+                                echo "Something went wrong. Please try again.";
+                                mysqli_stmt_close($stmt);
+                            }
+                        }
+                    }
                 }
                 else {
                     echo "Something went wrong. Please try again.";
